@@ -1,0 +1,90 @@
+;
+; Overfl0w.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample ; TODO: edit Class
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171} ; TODO: edit ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=Overfl0w.cat
+DriverVer = 07/02/2021,18.47.31.262
+PnpLockDown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+Overfl0w_Device_CoInstaller_CopyFiles = 11
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+Overfl0w.sys  = 1,,
+;
+
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NTamd64
+
+[Standard.NTamd64]
+%Overfl0w.DeviceDesc%=Overfl0w_Device, Root\Overfl0w ; TODO: edit hw-id
+
+[Overfl0w_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+Overfl0w.sys
+
+;-------------- Service installation
+[Overfl0w_Device.NT.Services]
+AddService = Overfl0w,%SPSVCINST_ASSOCSERVICE%, Overfl0w_Service_Inst
+
+; -------------- Overfl0w driver install sections
+[Overfl0w_Service_Inst]
+DisplayName    = %Overfl0w.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\Overfl0w.sys
+
+;
+;--- Overfl0w_Device Coinstaller installation ------
+;
+
+[Overfl0w_Device.NT.CoInstallers]
+AddReg=Overfl0w_Device_CoInstaller_AddReg
+CopyFiles=Overfl0w_Device_CoInstaller_CopyFiles
+
+[Overfl0w_Device_CoInstaller_AddReg]
+;
+
+
+[Overfl0w_Device_CoInstaller_CopyFiles]
+;
+
+
+[Overfl0w_Device.NT.Wdf]
+KmdfService =  Overfl0w, Overfl0w_wdfsect
+[Overfl0w_wdfsect]
+KmdfLibraryVersion = 1.15
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+ClassName="Samples" ; TODO: edit ClassName
+DiskName = "Overfl0w Installation Disk"
+Overfl0w.DeviceDesc = "Overfl0w Device"
+Overfl0w.SVCDESC = "Overfl0w Service"
